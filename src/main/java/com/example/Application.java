@@ -23,7 +23,7 @@ public class Application {
         // Stdio Server Transport
         var transportProvider = new StdioServerTransportProvider(new ObjectMapper());
 
-        // Sync Tool Specifcation
+        // Sync Tool Specification
         var syncToolSpecification = getSyncToolSpecification();
 
         McpServer.sync(transportProvider)
