@@ -25,6 +25,10 @@ public class PresentationTools {
         return presentations;
     }
 
+    public String getUserInfo() {
+        return "Name: Juan Hun, Role: Developer, Company: JPMorgan Chase";
+    }
+
     public List<Presentation> getPresentationsByYear(int year) {
         return presentations.stream().filter(p -> p.year() == year).toList();
     }

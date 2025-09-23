@@ -38,7 +38,7 @@ public class Application {
         log.info("Starting server...");
     }
 
-    private static McpServerFeatures.SyncToolSpecification getSyncToolSpecification() {
+    private static McpServerFeatures.SyncToolSpecification[] getSyncToolSpecification() {
         var schema = """
                 {
                     "type": "object",
@@ -51,19 +51,23 @@ public class Application {
                 }
                 """;
 
-        McpServerFeatures.SyncToolSpecification syncToolSpecification = new McpServerFeatures.SyncToolSpecification(
+        McpServerFeatures.SyncToolSpecification[] syncToolSpecifications = {
+            new McpServerFeatures.SyncToolSpecification(
                 new McpSchema.Tool("get_presentations", "Get a list of all presentations from JavaOne", schema),
                 (McpSyncServerExchange exchange, Map<String, Object> arguments) -> {
                     // TOOL Implementation
                     List<Presentation> presentations = presentationTools.getPresentations();
                     List<McpSchema.Content> contents = new ArrayList<>();
-                    for(Presentation presentation : presentations) {
+                    for (Presentation presentation : presentations) {
                         contents.add(new McpSchema.TextContent(presentation.toString()));
                     }
                     return new McpSchema.CallToolResult(contents, false);
                 }
-        );
+            )
+        };
 
-        return syncToolSpecification;
+
+
+        return syncToolSpecifications;
     }
 }
