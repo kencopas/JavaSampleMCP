@@ -16,7 +16,7 @@ import java.util.Map;
 public class Application {
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
-    private static PresentationTools presentationTools = new PresentationTools();
+    private static DataClient dataClient = new DataClient();
 
     public static void main(String[] args) {
 
@@ -39,6 +39,7 @@ public class Application {
     }
 
     private static McpServerFeatures.SyncToolSpecification[] getSyncToolSpecification() {
+
         var schema = """
                 {
                     "type": "object",
@@ -52,21 +53,21 @@ public class Application {
                 """;
 
         McpServerFeatures.SyncToolSpecification[] syncToolSpecifications = {
+            // Each Sync Tool Specification is an MCP Tool in the format (Definition, Implementation)
             new McpServerFeatures.SyncToolSpecification(
-                new McpSchema.Tool("get_presentations", "Get a list of all presentations from JavaOne", schema),
+                // Tool  Definition
+                new McpSchema.Tool("get_user_info", "Get the user's general information.", schema),
+                // Tool Implementation
                 (McpSyncServerExchange exchange, Map<String, Object> arguments) -> {
-                    // TOOL Implementation
-                    List<Presentation> presentations = presentationTools.getPresentations();
-                    List<McpSchema.Content> contents = new ArrayList<>();
-                    for (Presentation presentation : presentations) {
-                        contents.add(new McpSchema.TextContent(presentation.toString()));
-                    }
+                    List<McpSchema.Content> contents = new ArrayList<>() {};
+                    String userInfo = dataClient.getUserInfo();
+                    // Every object returned from an MCP Tool must be wrapped in a Content object
+                    contents.add(new McpSchema.TextContent(userInfo));
+                    // An MCP Tool should return a list of Content objects wrapped in a CallToolResult
                     return new McpSchema.CallToolResult(contents, false);
                 }
             )
         };
-
-
 
         return syncToolSpecifications;
     }
